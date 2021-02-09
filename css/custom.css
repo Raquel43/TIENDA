@@ -188,9 +188,16 @@ ul {
   background: white;
   min-height: 415px;
 }
-@media (min-width: 550px) {
+@media (max-width: 768px) {
+ #list-content{
+   display: flex;
+   flex-wrap: wrap;
+ }
   .card {
     text-align: left;
+   width: 100%;
+
+    
   }
 }
 .info-card {
