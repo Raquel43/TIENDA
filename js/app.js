@@ -16,8 +16,7 @@ init();
 function init() {
   cargarEventListeners();
   // TODO
-  //cargarCursos();
-}
+  getCursos();
 
 /**
  * Configurar los eventos de usuario
@@ -44,7 +43,12 @@ function cargarEventListeners() {
     document.querySelector("#num-cursos").innerHTML = "0"; // Inicializar cantidad cursos
   });
 
-  btnBuscador.addEventListener("click",buscar);
+  btnBuscador.addEventListener("click",function(){
+    let palabraEncontrada =document.getElementById("buscador").value;
+     buscar(palabraEncontrada);
+  });
+}
+  
   btnVerTodo.addEventListener("click",getCursos);
   btnPulsar.addEventListener("keypress",pulsar);
 
@@ -299,65 +303,85 @@ function pintaEstrella(star){
   return que;
 }
 
+function afegirDades(container, articulo){
+  container =  document.querySelector("#list-content");
+  limpiarJson(container);
+  const row = document.createElement("div");
+  row.classList.add("card");
+/*template*/
+row.innerHTML =`
+<img src="img/${articulo.img}" class="imagen-curso u-full-width">
+<div class="info-card">
+    <h4>${articulo.title}</h4>
+    <p class="profesor">${articulo.teacher}</p>
+    <div id="stars">${pintaEstrella(articulo.ratings)}
+
+</div>
+    <p class="precio">${articulo.price}€ <span class="u-pull-right ">${articulo.priceOffer}€</span></p>
+    <a href="#" class="u-full-width button-primary button input agregar-carrito" data-id="${articulo.id}">Agregar Al Carrito</a>
+</div>
+`;
+container.appendChild(row);
+
+  
+             
+
+  
+}
+
 function buscar(palabra){
  
   fetch("./data/cursos.json")
   .then((response) => response.json())
   .then((articulos) => {
-    
-     const container =  document.querySelector("#list-content");
+    pintarListaEncontrados(articulos, palabra);
 
-      for (let articulo of articulos) {
-        
-        palabra = document.getElementById("buscador").value;
-        let frase = articulo.title;
-         let fraseSinComilla = frase.replace(/,/g,"");
-         let arrayFrase = fraseSinComilla.split(" ");
-        console.log(arrayFrase);
-       for(i=0; i<arrayFrase.length; i++){
-       
-        if(arrayFrase[i].toLowerCase() == palabra.toLowerCase() || arrayFrase[i].toUpperCase() == palabra.toUpperCase()){
-       limpiarJson(container);
-      //alert("He encontrado tu curso de "+palabra);
-      const row = document.createElement("div");
-        row.classList.add("card");
-      /*template*/
-      row.innerHTML =`
-      <img src="img/${articulo.img}" class="imagen-curso u-full-width">
-      <div class="info-card">
-          <h4>${articulo.title}</h4>
-          <p class="profesor">${articulo.teacher}</p>
-          <div id="stars">${pintaEstrella(articulo.ratings)}
-      
-      </div>
-          <p class="precio">${articulo.price}€ <span class="u-pull-right ">${articulo.priceOffer}€</span></p>
-          <a href="#" class="u-full-width button-primary button input agregar-carrito" data-id="${articulo.id}">Agregar Al Carrito</a>
-      </div>
-  `;
-      container.appendChild(row);
-   
-        
-                   
-         
-         mostrarAlert2(palabra);
-         return true;
-        
-      }
-       
-      
-       
-      
-    
-  }
- 
- 
-}
-return  mostrarAlert3(palabra);
   });
- 
 }
 
+const pintarListaEncontrados = (articulos, palabra)=>{
+  const container = document.getElementById("list-content");
+  container.innerHTML = "";
+  
 
-getCursos();
+    for (let articulo of articulos) {
+       
+      palabra = document.getElementById("buscador").value; 
+       
+      let frase = articulo.title;
+       let fraseSinComilla = frase.replace(/,/g,"");
+       arrayFrase = fraseSinComilla.split(" ");
+      console.log(arrayFrase);
+    
+     for(i=0; i<arrayFrase.length; i++){
+    
+      if(arrayFrase[i].toLowerCase() == palabra.toLowerCase() || arrayFrase[i].toUpperCase() == palabra.toUpperCase()){
+      
+        console.log("Busco",palabra)
+        console.log("He encontrado esto",articulo.title);
+    container.innerHTML +=
+    `<div class="card">
+    <img src="img/${articulo.img}" class="imagen-curso u-full-width">
+    <div class="info-card">
+        <h4>${articulo.title}</h4>
+        <p class="profesor">${articulo.teacher}</p>
+        <div id="stars">${pintaEstrella(articulo.ratings)}</div>
+        <p class="precio">${articulo.price}€ <span class="u-pull-right ">${articulo.priceOffer}€</span></p>
+        <a href="#" class="u-full-width button-primary button input agregar-carrito" data-id="${articulo.id}">Agregar Al Carrito</a>
+    </div>
+    </div>`
+  
+  }
+}
+    }
+  }
+    
+   
+
+      //alert("He encontrado tu curso de "+palabra);
+       
+
+
+
 //pulsar();
 //<i class="fa fa-star borde yellow"></i><i class="fas fa-star-half borde yellow"></i><i class="far fa-star"></i><i class="far fa-star"></i>
